@@ -7,6 +7,11 @@
  * Author: supsystic.com
  * Author URI: http://supsystic.com/
  **/
+    if( is_file( dirname( __FILE__ ) . '/vendor/autoload.php' ) )
+    {
+        require_once dirname( __FILE__ ) . '/vendor/autoload.php';
+    }
+
 	/**
 	 * Base config constants and functions
 	 */

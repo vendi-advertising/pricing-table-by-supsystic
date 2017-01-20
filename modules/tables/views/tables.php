@@ -120,10 +120,12 @@ class tablesViewPts extends viewPts {
 		$this->pushRenderedTable( $table );
 		$content = parent::getContent('tablesRender');
 		$this->_initTwig();
-		return $this->_twig->render($content, array(
-			'table' => $table, 
+		//Create a template and render
+		$template = $this->_twig->createTemplate($content);
+		return $template->render(array(
+			'table' => $table,
 			'isEditMode' => $isEditMode,
-		));;
+		));
 	}
 	public function pushRenderedTable($table) {
 		$this->_renderedTables[] = $table;
@@ -189,7 +191,9 @@ class tablesViewPts extends viewPts {
 		$this->assign('isEditMode', $isEditMode);
 		$content = parent::getInlineContent('tablesRenderBlock');
 		$this->_initTwig();
-		return $this->_twig->render($content, array('block' => $block));
+		//Create a template and render
+		$template = $this->_twig->createTemplate($content);
+		return $template->render(array('block' => $block));
 	}
 	public function connectFrontendAssets( $tables = array(), $isEditMode = false ) {
 		$isDebbug = (bool) reqPts::getVar('is_debbug', 'get');
@@ -283,11 +287,8 @@ class tablesViewPts extends viewPts {
 	}
 	protected function _initTwig() {
 		if(!$this->_twig) {
-			if(!class_exists('Twig_Autoloader')) {
-				require_once(PTS_CLASSES_DIR. 'Twig'. DS. 'Autoloader.php');
-			}
-			Twig_Autoloader::register();
-			$this->_twig = new Twig_Environment(new Twig_Loader_String(), array('debug' => 0));
+			//Use an empty array loader to make Twig happy because we're only using string rendering
+			$this->_twig = new Twig_Environment( new Twig_Loader_Array( array() ), array('debug' => 0));
 			$this->_twig->addFunction(
 				new Twig_SimpleFunction('adjBs'	/*adjustBrightness*/, array(
 						$this,
